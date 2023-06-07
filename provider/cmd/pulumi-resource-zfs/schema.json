@@ -1,0 +1,657 @@
+{
+    "name": "zfs",
+    "displayName": "ZFS",
+    "description": "A Pulumi package for creating and managing ZFS resources",
+    "keywords": [
+        "pulumi",
+        "zfs",
+        "category/infrastructure"
+    ],
+    "homepage": "https://github.com/MaienM/pulumi-zfs",
+    "license": "Apache-2.0",
+    "attribution": "This Pulumi package is based on the [`zfs` Terraform Provider](https://github.com/MathiasPius/terraform-provider-zfs).",
+    "repository": "https://github.com/MaienM/pulumi-zfs",
+    "logoUrl": "https://raw.githubusercontent.com/MaienM/pulumi-zfs/main/docs/zfs.png",
+    "pluginDownloadURL": "github://api.github.com/MaienM/pulumi-zfs",
+    "publisher": "MaienM",
+    "meta": {
+        "moduleFormat": "(.*)(?:/[^/]*)"
+    },
+    "language": {
+        "csharp": {
+            "compatibility": "tfbridge20",
+            "namespaces": null,
+            "packageReferences": {
+                "Pulumi": "3.*"
+            },
+            "rootNamespace": "MaienM"
+        },
+        "go": {
+            "generateExtraInputTypes": true,
+            "generateResourceContainerTypes": true,
+            "importBasePath": "github.com/MaienM/pulumi-zfs/sdk/go/zfs"
+        },
+        "java": {
+            "basePackage": "com.maienm",
+            "buildFiles": "",
+            "gradleNexusPublishPluginVersion": ""
+        },
+        "nodejs": {
+            "compatibility": "tfbridge20",
+            "dependencies": {
+                "@pulumi/pulumi": "^3.0.0"
+            },
+            "devDependencies": {
+                "@types/mime": "^2.0.0",
+                "@types/node": "^10.0.0"
+            },
+            "disableUnionOutputTypes": true,
+            "packageDescription": "A Pulumi package for creating and managing ZFS resources",
+            "packageName": "@maienm/pulumi-zfs",
+            "readme": "\u003e This provider is a derived work of the [Terraform Provider](https://github.com/MathiasPius/terraform-provider-zfs)\n\u003e distributed under [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/). If you encounter a bug or missing feature,\n\u003e first check the [`pulumi-zfs` repo](https://github.com/MaienM/pulumi-zfs/issues); however, if that doesn't turn up anything,\n\u003e please consult the source [`terraform-provider-zfs` repo](https://github.com/MathiasPius/terraform-provider-zfs/issues).",
+            "typescriptVersion": ""
+        },
+        "python": {
+            "compatibility": "tfbridge20",
+            "packageName": "pulumi_zfs",
+            "readme": "\u003e This provider is a derived work of the [Terraform Provider](https://github.com/MathiasPius/terraform-provider-zfs)\n\u003e distributed under [MPL 2.0](https://www.mozilla.org/en-US/MPL/2.0/). If you encounter a bug or missing feature,\n\u003e first check the [`pulumi-zfs` repo](https://github.com/MaienM/pulumi-zfs/issues); however, if that doesn't turn up anything,\n\u003e please consult the source [`terraform-provider-zfs` repo](https://github.com/MathiasPius/terraform-provider-zfs/issues).",
+            "requires": {
+                "pulumi": "\u003e=3.0.0,\u003c4.0.0"
+            }
+        }
+    },
+    "config": {
+        "variables": {
+            "commandPrefix": {
+                "type": "string",
+                "description": "Can be used to prefix all ssh commands issued on the target host. For example, a command_prefix of 'sudo' can be used to\nelevate privileges on the target host, assuming password-less is configured for the user\n"
+            },
+            "host": {
+                "type": "string"
+            },
+            "key": {
+                "type": "string"
+            },
+            "keyPassphrase": {
+                "type": "string"
+            },
+            "keyPath": {
+                "type": "string"
+            },
+            "password": {
+                "type": "string"
+            },
+            "port": {
+                "type": "string"
+            },
+            "user": {
+                "type": "string"
+            }
+        },
+        "defaults": [
+            "host",
+            "port",
+            "user"
+        ]
+    },
+    "types": {
+        "zfs:index/DatasetProperty:DatasetProperty": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "type": "object",
+            "required": [
+                "name",
+                "value"
+            ]
+        },
+        "zfs:index/PoolDevice:PoolDevice": {
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "willReplaceOnChanges": true
+                }
+            },
+            "type": "object",
+            "required": [
+                "path"
+            ]
+        },
+        "zfs:index/PoolMirror:PoolMirror": {
+            "properties": {
+                "devices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/zfs:index/PoolMirrorDevice:PoolMirrorDevice"
+                    },
+                    "willReplaceOnChanges": true
+                }
+            },
+            "type": "object",
+            "required": [
+                "devices"
+            ]
+        },
+        "zfs:index/PoolMirrorDevice:PoolMirrorDevice": {
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "willReplaceOnChanges": true
+                }
+            },
+            "type": "object",
+            "required": [
+                "path"
+            ]
+        },
+        "zfs:index/PoolProperty:PoolProperty": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            },
+            "type": "object",
+            "required": [
+                "name",
+                "value"
+            ]
+        }
+    },
+    "provider": {
+        "description": "The provider type for the zfs package. By default, resources use package-wide configuration\nsettings, however an explicit `Provider` instance may be created and passed during resource\nconstruction to achieve fine-grained programmatic control over provider settings. See the\n[documentation](https://www.pulumi.com/docs/reference/programming-model/#providers) for more information.\n",
+        "properties": {
+            "commandPrefix": {
+                "type": "string",
+                "description": "Can be used to prefix all ssh commands issued on the target host. For example, a command_prefix of 'sudo' can be used to\nelevate privileges on the target host, assuming password-less is configured for the user\n"
+            },
+            "host": {
+                "type": "string"
+            },
+            "key": {
+                "type": "string"
+            },
+            "keyPassphrase": {
+                "type": "string"
+            },
+            "keyPath": {
+                "type": "string"
+            },
+            "password": {
+                "type": "string"
+            },
+            "port": {
+                "type": "string"
+            },
+            "user": {
+                "type": "string"
+            }
+        },
+        "required": [
+            "host",
+            "port",
+            "user"
+        ],
+        "inputProperties": {
+            "commandPrefix": {
+                "type": "string",
+                "description": "Can be used to prefix all ssh commands issued on the target host. For example, a command_prefix of 'sudo' can be used to\nelevate privileges on the target host, assuming password-less is configured for the user\n"
+            },
+            "host": {
+                "type": "string"
+            },
+            "key": {
+                "type": "string"
+            },
+            "keyPassphrase": {
+                "type": "string"
+            },
+            "keyPath": {
+                "type": "string"
+            },
+            "password": {
+                "type": "string"
+            },
+            "port": {
+                "type": "string"
+            },
+            "user": {
+                "type": "string"
+            }
+        },
+        "requiredInputs": [
+            "host",
+            "port",
+            "user"
+        ]
+    },
+    "resources": {
+        "zfs:index/dataset:Dataset": {
+            "description": "zfs dataset resource.\n\n{{% examples %}}\n## Example Usage\n{{% example %}}\n\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.zfs.Dataset;\nimport com.pulumi.zfs.DatasetArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        var homedir = new Dataset(\"homedir\", DatasetArgs.builder()        \n            .mountpoint(Map.ofEntries(\n                Map.entry(\"gid\", 2519),\n                Map.entry(\"path\", \"/home/myuser\"),\n                Map.entry(\"uid\", 2519)\n            ))\n            .properties(%!v(PANIC=Format method: runtime error: invalid memory address or nil pointer dereference))\n            .build());\n\n    }\n}\n```\n```yaml\nresources:\n  homedir:\n    type: zfs:Dataset\n    properties:\n      mountpoint:\n        - gid: 2519\n          path: /home/myuser\n          uid: 2519\n      properties:\n        - name: quota\n          value: 8G\n```\n{{% /example %}}\n{{% /examples %}}",
+            "properties": {
+                "gid": {
+                    "type": "integer",
+                    "description": "Set group of the mountpoint. Must be a valid gid\n"
+                },
+                "group": {
+                    "type": "string",
+                    "description": "Set group of the mountpoint. Must be a valid group name\n"
+                },
+                "mountpoint": {
+                    "type": "string",
+                    "description": "Mountpoint of the dataset.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the ZFS dataset.\n"
+                },
+                "owner": {
+                    "type": "string",
+                    "description": "Set owner of the mountpoint. Must be a valid username\n"
+                },
+                "properties": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "Formatted versions of all zfs properties.\n"
+                },
+                "property": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/zfs:index/DatasetProperty:DatasetProperty"
+                    },
+                    "description": "Propert(y/ies) to set\n"
+                },
+                "propertyMode": {
+                    "type": "string",
+                    "description": "Which properties to manage. \"defined\" means only manage the properties explicitly defined in the resource. This is the\ndefault. \"native\" means manage all native zfs properties, but leave user properties alone (see man zfsprops for more\ninfo about these types of properties). This means all properties that aren't defined in the terraform resource but that\nare explicitly overriden on the zfs resource will be set back to inherit from their parent/the default. \"all\" is like\n\"native\", but also includes user properties. Be careful when removing/altering properties you don't recognize as some\ntools might use user properties to track information important for that tool to work properly with a given resource.\nNote that some properties don't have a default that they can be compared/reset to (notably most of the zpool\nproperties). These properties will only ever be managed when explicitly defined, and will be left as they are when they\nstop being defined.\n"
+                },
+                "rawProperties": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "Parseable versions of all zfs properties.\n"
+                },
+                "uid": {
+                    "type": "integer",
+                    "description": "Set owner of the mountpoint. Must be a valid uid\n"
+                }
+            },
+            "required": [
+                "name",
+                "properties",
+                "rawProperties"
+            ],
+            "inputProperties": {
+                "gid": {
+                    "type": "integer",
+                    "description": "Set group of the mountpoint. Must be a valid gid\n"
+                },
+                "group": {
+                    "type": "string",
+                    "description": "Set group of the mountpoint. Must be a valid group name\n"
+                },
+                "mountpoint": {
+                    "type": "string",
+                    "description": "Mountpoint of the dataset.\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the ZFS dataset.\n"
+                },
+                "owner": {
+                    "type": "string",
+                    "description": "Set owner of the mountpoint. Must be a valid username\n"
+                },
+                "property": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/zfs:index/DatasetProperty:DatasetProperty"
+                    },
+                    "description": "Propert(y/ies) to set\n"
+                },
+                "propertyMode": {
+                    "type": "string",
+                    "description": "Which properties to manage. \"defined\" means only manage the properties explicitly defined in the resource. This is the\ndefault. \"native\" means manage all native zfs properties, but leave user properties alone (see man zfsprops for more\ninfo about these types of properties). This means all properties that aren't defined in the terraform resource but that\nare explicitly overriden on the zfs resource will be set back to inherit from their parent/the default. \"all\" is like\n\"native\", but also includes user properties. Be careful when removing/altering properties you don't recognize as some\ntools might use user properties to track information important for that tool to work properly with a given resource.\nNote that some properties don't have a default that they can be compared/reset to (notably most of the zpool\nproperties). These properties will only ever be managed when explicitly defined, and will be left as they are when they\nstop being defined.\n"
+                },
+                "uid": {
+                    "type": "integer",
+                    "description": "Set owner of the mountpoint. Must be a valid uid\n"
+                }
+            },
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering Dataset resources.\n",
+                "properties": {
+                    "gid": {
+                        "type": "integer",
+                        "description": "Set group of the mountpoint. Must be a valid gid\n"
+                    },
+                    "group": {
+                        "type": "string",
+                        "description": "Set group of the mountpoint. Must be a valid group name\n"
+                    },
+                    "mountpoint": {
+                        "type": "string",
+                        "description": "Mountpoint of the dataset.\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the ZFS dataset.\n"
+                    },
+                    "owner": {
+                        "type": "string",
+                        "description": "Set owner of the mountpoint. Must be a valid username\n"
+                    },
+                    "properties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Any"
+                        },
+                        "description": "Formatted versions of all zfs properties.\n"
+                    },
+                    "property": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/zfs:index/DatasetProperty:DatasetProperty"
+                        },
+                        "description": "Propert(y/ies) to set\n"
+                    },
+                    "propertyMode": {
+                        "type": "string",
+                        "description": "Which properties to manage. \"defined\" means only manage the properties explicitly defined in the resource. This is the\ndefault. \"native\" means manage all native zfs properties, but leave user properties alone (see man zfsprops for more\ninfo about these types of properties). This means all properties that aren't defined in the terraform resource but that\nare explicitly overriden on the zfs resource will be set back to inherit from their parent/the default. \"all\" is like\n\"native\", but also includes user properties. Be careful when removing/altering properties you don't recognize as some\ntools might use user properties to track information important for that tool to work properly with a given resource.\nNote that some properties don't have a default that they can be compared/reset to (notably most of the zpool\nproperties). These properties will only ever be managed when explicitly defined, and will be left as they are when they\nstop being defined.\n"
+                    },
+                    "rawProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Any"
+                        },
+                        "description": "Parseable versions of all zfs properties.\n"
+                    },
+                    "uid": {
+                        "type": "integer",
+                        "description": "Set owner of the mountpoint. Must be a valid uid\n"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "zfs:index/pool:Pool": {
+            "description": "zfs pool resource.\n\n{{% examples %}}\n## Example Usage\n{{% example %}}\n\n```java\npackage generated_program;\n\nimport com.pulumi.Context;\nimport com.pulumi.Pulumi;\nimport com.pulumi.core.Output;\nimport com.pulumi.zfs.Pool;\nimport com.pulumi.zfs.PoolArgs;\nimport com.pulumi.zfs.inputs.PoolMirrorArgs;\nimport java.util.List;\nimport java.util.ArrayList;\nimport java.util.Map;\nimport java.io.File;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\n\npublic class App {\n    public static void main(String[] args) {\n        Pulumi.run(App::stack);\n    }\n\n    public static void stack(Context ctx) {\n        var zdata = new Pool(\"zdata\", PoolArgs.builder()        \n            .mirrors(            \n                PoolMirrorArgs.builder()\n                    .devices(                    \n                        PoolMirrorDeviceArgs.builder()\n                            .path(\"/dev/sda\")\n                            .build(),\n                        PoolMirrorDeviceArgs.builder()\n                            .path(\"/dev/sdb\")\n                            .build())\n                    .build(),\n                PoolMirrorArgs.builder()\n                    .devices(                    \n                        PoolMirrorDeviceArgs.builder()\n                            .path(\"/dev/sdc\")\n                            .build(),\n                        PoolMirrorDeviceArgs.builder()\n                            .path(\"/dev/sdd\")\n                            .build())\n                    .build())\n            .properties(            \n                %!v(PANIC=Format method: runtime error: invalid memory address or nil pointer dereference),\n                %!v(PANIC=Format method: runtime error: invalid memory address or nil pointer dereference),\n                %!v(PANIC=Format method: runtime error: invalid memory address or nil pointer dereference))\n            .build());\n\n    }\n}\n```\n```yaml\nresources:\n  zdata:\n    type: zfs:Pool\n    properties:\n      mirrors:\n        - devices:\n            - path: /dev/sda\n            - path: /dev/sdb\n        - devices:\n            - path: /dev/sdc\n            - path: /dev/sdd\n      properties:\n        - name: relatime\n          value: on\n        - name: recordsize\n          value: 4K\n        - name: compression\n          value: on\n```\n{{% /example %}}\n{{% /examples %}}",
+            "properties": {
+                "devices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/zfs:index/PoolDevice:PoolDevice"
+                    },
+                    "description": "Defines a striped vdev\n"
+                },
+                "mirrors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/zfs:index/PoolMirror:PoolMirror"
+                    },
+                    "description": "Defines a mirrored vdev\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the zpool.\n"
+                },
+                "properties": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "Formatted versions of all zfs properties.\n"
+                },
+                "property": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/zfs:index/PoolProperty:PoolProperty"
+                    },
+                    "description": "Propert(y/ies) to set\n"
+                },
+                "propertyMode": {
+                    "type": "string",
+                    "description": "Which properties to manage. \"defined\" means only manage the properties explicitly defined in the resource. This is the\ndefault. \"native\" means manage all native zfs properties, but leave user properties alone (see man zfsprops for more\ninfo about these types of properties). This means all properties that aren't defined in the terraform resource but that\nare explicitly overriden on the zfs resource will be set back to inherit from their parent/the default. \"all\" is like\n\"native\", but also includes user properties. Be careful when removing/altering properties you don't recognize as some\ntools might use user properties to track information important for that tool to work properly with a given resource.\nNote that some properties don't have a default that they can be compared/reset to (notably most of the zpool\nproperties). These properties will only ever be managed when explicitly defined, and will be left as they are when they\nstop being defined.\n"
+                },
+                "rawProperties": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "pulumi.json#/Any"
+                    },
+                    "description": "Parseable versions of all zfs properties.\n"
+                }
+            },
+            "required": [
+                "name",
+                "properties",
+                "rawProperties"
+            ],
+            "inputProperties": {
+                "devices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/zfs:index/PoolDevice:PoolDevice"
+                    },
+                    "description": "Defines a striped vdev\n"
+                },
+                "mirrors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/zfs:index/PoolMirror:PoolMirror"
+                    },
+                    "description": "Defines a mirrored vdev\n"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the zpool.\n"
+                },
+                "property": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/types/zfs:index/PoolProperty:PoolProperty"
+                    },
+                    "description": "Propert(y/ies) to set\n"
+                },
+                "propertyMode": {
+                    "type": "string",
+                    "description": "Which properties to manage. \"defined\" means only manage the properties explicitly defined in the resource. This is the\ndefault. \"native\" means manage all native zfs properties, but leave user properties alone (see man zfsprops for more\ninfo about these types of properties). This means all properties that aren't defined in the terraform resource but that\nare explicitly overriden on the zfs resource will be set back to inherit from their parent/the default. \"all\" is like\n\"native\", but also includes user properties. Be careful when removing/altering properties you don't recognize as some\ntools might use user properties to track information important for that tool to work properly with a given resource.\nNote that some properties don't have a default that they can be compared/reset to (notably most of the zpool\nproperties). These properties will only ever be managed when explicitly defined, and will be left as they are when they\nstop being defined.\n"
+                }
+            },
+            "stateInputs": {
+                "description": "Input properties used for looking up and filtering Pool resources.\n",
+                "properties": {
+                    "devices": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/zfs:index/PoolDevice:PoolDevice"
+                        },
+                        "description": "Defines a striped vdev\n"
+                    },
+                    "mirrors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/zfs:index/PoolMirror:PoolMirror"
+                        },
+                        "description": "Defines a mirrored vdev\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the zpool.\n"
+                    },
+                    "properties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Any"
+                        },
+                        "description": "Formatted versions of all zfs properties.\n"
+                    },
+                    "property": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/types/zfs:index/PoolProperty:PoolProperty"
+                        },
+                        "description": "Propert(y/ies) to set\n"
+                    },
+                    "propertyMode": {
+                        "type": "string",
+                        "description": "Which properties to manage. \"defined\" means only manage the properties explicitly defined in the resource. This is the\ndefault. \"native\" means manage all native zfs properties, but leave user properties alone (see man zfsprops for more\ninfo about these types of properties). This means all properties that aren't defined in the terraform resource but that\nare explicitly overriden on the zfs resource will be set back to inherit from their parent/the default. \"all\" is like\n\"native\", but also includes user properties. Be careful when removing/altering properties you don't recognize as some\ntools might use user properties to track information important for that tool to work properly with a given resource.\nNote that some properties don't have a default that they can be compared/reset to (notably most of the zpool\nproperties). These properties will only ever be managed when explicitly defined, and will be left as they are when they\nstop being defined.\n"
+                    },
+                    "rawProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Any"
+                        },
+                        "description": "Parseable versions of all zfs properties.\n"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "functions": {
+        "zfs:index/getDataset:getDataset": {
+            "description": "Data about a specific dataset.\n",
+            "inputs": {
+                "description": "A collection of arguments for invoking getDataset.\n",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the zfs dataset.\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name"
+                ]
+            },
+            "outputs": {
+                "description": "A collection of values returned by getDataset.\n",
+                "properties": {
+                    "gid": {
+                        "type": "integer",
+                        "description": "gid of the group owning the mountpoint.\n"
+                    },
+                    "group": {
+                        "type": "string",
+                        "description": "Name of the group owning the mountpoint\n"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The provider-assigned unique ID for this managed resource.\n"
+                    },
+                    "mountpoint": {
+                        "type": "string",
+                        "description": "Mountpoint of the dataset.\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the zfs dataset.\n"
+                    },
+                    "owner": {
+                        "type": "string",
+                        "description": "Username of the owner of the mountpoint\n"
+                    },
+                    "properties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Any"
+                        },
+                        "description": "Formatted versions of all zfs properties.\n"
+                    },
+                    "rawProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Any"
+                        },
+                        "description": "Parseable versions of all zfs properties.\n"
+                    },
+                    "uid": {
+                        "type": "integer",
+                        "description": "uid of the owner of the mountpoint\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "gid",
+                    "group",
+                    "mountpoint",
+                    "name",
+                    "owner",
+                    "properties",
+                    "rawProperties",
+                    "uid",
+                    "id"
+                ]
+            }
+        },
+        "zfs:index/getPool:getPool": {
+            "inputs": {
+                "description": "A collection of arguments for invoking getPool.\n",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the zpool.\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name"
+                ]
+            },
+            "outputs": {
+                "description": "A collection of values returned by getPool.\n",
+                "properties": {
+                    "capacity": {
+                        "type": "string",
+                        "description": "Capacity of the pool.\n"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The provider-assigned unique ID for this managed resource.\n"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the zpool.\n"
+                    },
+                    "properties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Any"
+                        },
+                        "description": "Formatted versions of all zfs properties.\n"
+                    },
+                    "rawProperties": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "pulumi.json#/Any"
+                        },
+                        "description": "Parseable versions of all zfs properties.\n"
+                    },
+                    "size": {
+                        "type": "string",
+                        "description": "Size of the pool.\n"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "capacity",
+                    "name",
+                    "properties",
+                    "rawProperties",
+                    "size",
+                    "id"
+                ]
+            }
+        }
+    }
+}
